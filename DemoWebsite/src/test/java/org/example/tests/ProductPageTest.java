@@ -6,37 +6,36 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import java.time.Duration; // Make sure this is imported
+import java.time.Duration;
 
 public class ProductPageTest extends BaseTest {
 
     @Test
-    public void addMacBookToCartTest() {
-        // Use Explicit Wait for the search box to be ready after page load
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("search")));
+    public void addProductToCartTest() {
+        // --- 1. Login to the Site ---
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name")));
 
-        // Search for MacBook
-        WebElement searchBox = driver.findElement(By.name("search"));
-        searchBox.sendKeys("MacBook");
-        searchBox.submit();
+        driver.findElement(By.id("user-name")).sendKeys("standard_user");
+        driver.findElement(By.id("password")).sendKeys("secret_sauce");
+        driver.findElement(By.id("login-button")).click();
 
-        // Click on MacBook link
-        WebElement macBookLink = driver.findElement(By.linkText("MacBook"));
-        macBookLink.click();
+        // --- 2. Verify successful login (Check for Inventory Page) ---
+        wait.until(ExpectedConditions.urlContains("inventory"));
 
-        // Wait for the Add to Cart button to be clickable on the product page
-        WebElement addToCartBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("button-cart")));
+        // --- 3. Add a product to the cart (Sauce Labs Backpack) ---
+        // Find the "Add to cart" button for a specific product using its ID
+        String productAddToCartId = "add-to-cart-sauce-labs-backpack";
+        WebElement addToCartBtn = driver.findElement(By.id(productAddToCartId));
         addToCartBtn.click();
 
-        // Verify success alert using Explicit Wait
-        WebElement successMsg = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".alert-success")));
+        // --- 4. Verify the cart icon badge shows '1' ---
+        WebElement cartBadge = driver.findElement(By.cssSelector(".shopping_cart_badge"));
+        String cartCount = cartBadge.getText();
 
-        // Check the success message text
-        Assert.assertTrue(successMsg.getText().contains("Success"), "Product added to cart verification failed!");
+        // Assertions (equivalent to the old success message check)
+        Assert.assertEquals(cartCount, "1", "Product count in the cart is incorrect after adding an item.");
 
-        System.out.println(successMsg.getText());
+        System.out.println("Test Passed! Product added to cart successfully. Cart count: " + cartCount);
     }
 }
-

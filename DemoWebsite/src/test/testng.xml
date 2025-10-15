@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="OpenCartTestSuite">
+    <test name="HomePageTests">
+        <classes>
+            <class name="org.example.tests.HomePageTest"/>
+            <class name="org.example.tests.ProductPageTest"/>
+        </classes>
+    </test>
+</suite>
